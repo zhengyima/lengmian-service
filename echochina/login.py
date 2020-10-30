@@ -18,7 +18,7 @@ def login(res):
 
 	url = "https://api.weixin.qq.com/sns/jscode2session"
 
-	querystring = {"appid":"wxa24a3202d13fc270","secret":"9eeae5631a9cf8106532825fa285e629","js_code":res.GET['code'],"grant_type":"authorization_code"}
+	querystring = {"appid":"wx4ebddf1826c3c1c5","secret":"f453552f27cba43aba467ca5116254fe","js_code":res.GET['code'],"grant_type":"authorization_code"}
 
 	headers = {
 	'user-agent': "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36",
@@ -35,14 +35,14 @@ def login(res):
 	userdata = json.loads(response.text)
 	print(userdata)
 	cursor = connections['default'].cursor()
-	cursor.execute("select * from user where uno = %s",(userdata['openid'],))
+	cursor.execute("select * from users where openid = %s",(userdata['openid'],))
 
 	flag = 1   
 
 	if(len(cursor.fetchall()) == 0):
 		rawdata = json.loads(res.GET['rawData'])
 		icursor = connections['default'].cursor()
-		icursor.execute("insert into user values(%s,%s,sysdate(),%s,%s,%s,%s,%s,%s)",(userdata['openid'],rawdata['nickName'],rawdata['gender'],rawdata['language'],rawdata['city'],rawdata['province'],rawdata['country'],rawdata['avatarUrl'],))
+		icursor.execute("insert into users values(null,%s,%s,sysdate(),%s,%s,%s,%s,%s,%s)",(userdata['openid'],rawdata['nickName'],rawdata['gender'],rawdata['language'],rawdata['city'],rawdata['province'],rawdata['country'],rawdata['avatarUrl'],))
 		icursor.close()
 	
 	cursor.close()
